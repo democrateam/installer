@@ -51,4 +51,4 @@ smtp_password:       "password"
 smtp_authentication: "plain"
 
 #LetsEncrypt
-#letsencrypt_email: "your_email@example.com"
+#letsencrypt_email: "hello@democrateam.com"
