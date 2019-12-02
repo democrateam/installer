@@ -15,7 +15,7 @@
     - nginx
     - memcached
     - timezone
-    # - capistrano
+    - capistrano
 
 - name: Check system
   hosts: all
