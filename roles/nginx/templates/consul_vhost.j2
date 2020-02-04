@@ -10,6 +10,13 @@ server {
 
   server_name {{ server_hostname }};
 
+  client_header_timeout 3000;
+  client_body_timeout 3000;
+  fastcgi_read_timeout 3000;
+  fastcgi_buffers 8 128k;
+  fastcgi_buffer_size 128k;
+  client_max_body_size 64M;
+
   {% if domain is defined or lookup('env', 'CI') %}
 
     listen [::]:443 ssl ipv6only=on;
