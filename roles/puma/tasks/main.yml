@@ -1,0 +1,29 @@
+---
+- name: Create pids and sockets folders
+  file:
+    path: "{{ shared_dir }}/tmp/{{ item }}"
+    state: directory
+  with_items:
+    - "pids"
+    - "sockets"
+
+- name: Check that puma is running
+  stat:
+    path: "{{ shared_dir }}/tmp/pids/puma.pid"
+  register: puma_process
+
+- name: Get running puma process
+  shell: "cat {{ shared_dir }}/tmp/pids/puma.pid"
+  register: running_process
+  when: puma_process.stat.exists == True
+
+- name: Kill running process
+  shell: "kill -QUIT {{ item }}"
+  with_items: "{{ running_process.stdout_lines }}"
+  when: puma_process.stat.exists == True
+
+- name: Start puma
+  shell: "source {{ home_dir }}/.rvm/scripts/rvm && bundle exec puma -C {{ release_dir }}/config/puma/{{ env }}.rb -e {{ env }} -d"
+  args:
+    chdir: "{{ release_dir }}"
+    executable: /bin/bash
