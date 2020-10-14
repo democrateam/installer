@@ -1,6 +1,5 @@
-- name: Disable queue with DelayedJobs (for now )
-  template:
-    src: "{{ playbook_dir }}/roles/queue/templates/delayed_job_config.rb"
-    dest: "/home/{{ deploy_user}}/consul/config/initializers/delayed_job_config.rb"
-    owner: "{{ deploy_user }}"
-    group: wheel
+- name: Start DelayedJobs queue
+  shell: "source /home/{{ deploy_user }}/.rvm/scripts/rvm && RAILS_ENV={{ env }} bin/delayed_job -n 2 restart"
+  args:
+    executable: /bin/bash
+    chdir: "{{ release_dir }}"

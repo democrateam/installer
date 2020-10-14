@@ -1,21 +1,48 @@
 ---
+- name: Set up web server
+  hosts: all
+  become: true
+  vars:
+    ansible_user: "{{ deploy_user }}"
+  roles:
+    - letsencrypt
+    - nginx
+
 - name: Set up CONSUL
   hosts: all
   become: true
+  become_user: "{{ deploy_user }}"
   vars:
     # https://github.com/ansible/proposals/issues/89
     ansible_user: "{{ deploy_user }}"
   roles:
+    - folder_structure
     - ruby
     - rails
-    - letsencrypt
     - email
     - queue
-    - unicorn
-    - nginx
+    - puma
+
+- name: Post-installation tasks
+  hosts: all
+  become: true
+  vars:
+    ansible_user: "{{ deploy_user }}"
+  roles:
     - memcached
     - timezone
-    - capistrano
+
+- name: Install Errbit
+  hosts: all
+  become: true
+  vars:
+    ansible_user: "{{ deploy_user }}"
+  roles:
+    - role: mongodb
+      when: errbit|bool
+    - role: errbit
+      become_user: "{{ deploy_user }}"
+      when: errbit|bool
 
 - name: Check system
   hosts: all

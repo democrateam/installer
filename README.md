@@ -3,29 +3,30 @@
 [CONSUL](https://github.com/consul/consul) installer for production environments
 
 Using [Ansible](http://docs.ansible.com/), it will install and configure the following:
- - Ruby
- - Rails
- - Postgres
- - Nginx
- - Unicorn
- - SMTP
- - Memcached
- - DelayedJobs
- - HTTPS
- - Capistrano
+
+- Ruby
+- Rails
+- Postgres
+- Nginx
+- Puma
+- SMTP
+- Memcached
+- DelayedJobs
+- HTTPS
+- Capistrano
 
 It will also create a `deploy` user to install these libraries
 
 ## Screencast
-[How to setup CONSUL for a production environment](https://public.3.basecamp.com/p/dSTKWbqxtZSaSSpMiYWiqR9U)
+
+[How to setup CONSUL for a production environment](https://youtu.be/1lvnjDuRFzw)
 
 ## Prerequisities
 
-A remote server with the supported distribution
+A remote server with one of the supported distributions:
 
-```
-Ubuntu 16.04 x64
-```
+- Ubuntu 16.04 x64
+- Ubuntu 18.04 x64
 
 Access to a remote server via public ssh key without password.
 The default user is `deploy` but you can [use any user](#using-a-different-user-than-deploy) with sudo privileges.
@@ -35,22 +36,22 @@ ssh root@remote-server-ip-address
 ```
 
 Updated system package versions
+
 ```
 sudo apt-get update
 ```
 
-Python 2 installed in the remote server
+Python 2.7 installed in the remote server
 
 ```
 sudo apt-get -y install python-simplejson
 ```
 
-
 ## Running the installer
 
 The following commands must be executed in your local machine
 
-[Install Ansible >= 2.4](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+[Install Ansible >= 2.7](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
 Get the Ansible Playbook
 
@@ -60,6 +61,7 @@ cd installer
 ```
 
 Create your local `hosts` file
+
 ```
 cp hosts.example hosts
 ```
@@ -73,8 +75,10 @@ remote-server-ip-address (maintain other default options)
 Run the ansible playbook
 
 ```
-sudo ansible-playbook -v consul.yml -i hosts
+ansible-playbook -v consul.yml -i hosts
 ```
+
+Note about old versions: if you've already used the installer before version 1.1 was released, you might need to remove your `~/.ansible` folder.
 
 Visit remote-server-ip-address in your browser and you should see CONSUL running!
 
@@ -92,31 +96,17 @@ admin@consul.dev
 To restart the server and deploy new code to the server we have to configure Capistrano.
 
 ### Screencast
-[How to setup Capistrano](https://public.3.basecamp.com/p/SxF1BrYFHBZkRWkqVX4NUxGU)
+
+[How to setup Capistrano](https://youtu.be/ZCfPz_c_H6g)
 
 Create your [fork](https://help.github.com/articles/fork-a-repo/)
 
-Setup locally for your [development environment](https://docs.consulproject.org/docs/english-documentation/introduction/local_installation))
+Setup locally for your [development environment](https://docs.consulproject.org/docs/english-documentation/introduction/local_installation)
 
-Uncomment this line in `app.yml` and rerun the installer
-
-```
-# - capistrano
-```
-
-Run the ansible playbook
+Checkout the latest stable version:
 
 ```
-sudo ansible-playbook -v consul.yml -i hosts
-```
-
-Download changes from the `capistrano` branch to your fork
-
-```
-git remote add upstream git@github.com:consul/consul.git
-git fetch upstream
-git merge upstream/capistrano
-git push origin master
+git checkout origin/1.2.0 -b stable
 ```
 
 Create your `deploy-secrets.yml`
@@ -135,6 +125,7 @@ server_name: "your_remote_ip_address"
 ```
 
 Update your `repo_url` in `deploy.rb`
+
 ```
 set :repo_url, 'https://github.com/your_github_username/consul.git'
 ```
@@ -144,13 +135,13 @@ Make a change in a view and push it your fork in Github
 ```
 git add .
 git commit -a -m "Add sample text to homepage"
-git push origin master
+git push origin stable
 ```
 
 Deploy to production
 
 ```
-cap production deploy
+branch=stable cap production deploy
 ```
 
 You should now see that change at your remote server's ip address
@@ -158,22 +149,26 @@ You should now see that change at your remote server's ip address
 ## Email configuration
 
 ### Screencast
-[How to setup email deliveries](https://public.3.basecamp.com/p/yAGcyJeSVHaW43M7aoHCxu6L)
+
+[How to setup email deliveries](https://youtu.be/9W6txGpe4v4)
+
+Screencast update: The Installer now configures a queue to send emails asynchronously. Thus you will not see a 500 error when there is a misconfiguration, as the email is sent asyncronously and the error will be raised in the queue. To see email error logs open the rails console (`cd /home/deploy/consul/current/ && bin/rails c -e production`) and search for the last error in the queue `Delayed::Job.last.last_error`)
 
 Update the following file in your production server:
-`/home/deploy/consul/shared/config/environments/production.rb`
+`/home/deploy/consul/shared/config/secrets.yml`
 
-You want to change this block of code and use your own SMTP credentials:
+You want to change this block of code for your production environment and use your own SMTP credentials:
+
 ```
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address:              "smtp.example.com",
-    port:                 "25",
-    domain:               "your_domain.com or ip address",
-    user_name:            "username",
-    password:             "password",
-    authentication:       "plain",
-    enable_starttls_auto: true }
+  mailer_delivery_method: "smtp"
+  smtp_settings:
+    address:              "smtp.example.com"
+    port:                 "25"
+    domain:               "your_domain.com"
+    user_name:            "username"
+    password:             "password"
+    authentication:       "plain"
+    enable_starttls_auto: true
 ```
 
 And restart the server running this command from your local CONSUL installation (see [Deploys with Capistrano](https://github.com/consul/installer#deploys-with-capistrano) for details).
@@ -183,10 +178,29 @@ cap production deploy:restart
 ```
 
 Once you setup your domain, depending on your SMTP provider, you will have to do two things:
+
 - Update the `server_name` with your domain in `/home/deploy/consul/shared/config/secrets.yml`.
 - Update the `sender_email_address` from the admin section (`remote-server-ip-address/admin/settings`)
 
 If your SMTP provider uses an authentication other than `plain`, check out the [Rails docs on email configuration](https://guides.rubyonrails.org/action_mailer_basics.html#action-mailer-configuration) for the different authentation options.
+
+## Staging server
+
+To setup a staging server to try things out before deploying to a production server:
+
+Update your local `hosts` file with the staging server's ip address
+
+```
+remote-server-ip-address (maintain other default options)
+```
+
+And run the playbook with an extra var "env":
+
+```
+sudo ansible-playbook -v consul.yml --extra-vars "env=staging" -i hosts
+```
+
+Visit remote-server-ip-address in your browser and you should now see CONSUL running in your staging server.
 
 ## SSL with LetsEncrypt
 
@@ -194,21 +208,22 @@ Using https instead of http is an important security configuration. Before you b
 
 Once you have that setup we need to configure the Installer to use your domain in the application.
 
-First, uncomment the `domain` variable in the [configuration file](https://github.com/consul/installer/blob/master/group_vars/all) and update it with your domain name:
+First, uncomment the `domain` variable in the [configuration file](https://github.com/consul/installer/blob/1.2.0/group_vars/all) and update it with your domain name:
 
 ```
 #domain: "your_domain.com"
 ```
 
-Next, uncomment the `letsencrypt_email` variable in the [configuration file](https://github.com/consul/installer/blob/master/group_vars/all) and update it with a valid email address:
+Next, uncomment the `letsencrypt_email` variable in the [configuration file](https://github.com/consul/installer/blob/1.2.0/group_vars/all) and update it with a valid email address:
 
 ```
 #letsencrypt_email: "your_email@example.com"
 ```
 
 Re-run the installer:
+
 ```
-sudo ansible-playbook -v consul.yml -i hosts
+ansible-playbook -v consul.yml -i hosts
 ```
 
 You should now be able to see the application running at https://your_domain.com in your browser.
@@ -224,9 +239,6 @@ locale: en_US.UTF-8
 
 # Authorized Hosts
 ssh_public_key_path: "change_me/.ssh/id_rsa.pub"
-
-# Ruby
-ruby_version: 2.3.2
 
 #Postgresql
 postgresql_version: 9.6
@@ -245,7 +257,7 @@ smtp_password:       "password"
 smtp_authentication: "plain"
 ```
 
-There are many more variables available check them out [here]((https://github.com/consul/installer/blob/master/group_vars/all))
+There are many more variables available check them out [here]((https://github.com/consul/installer/blob/1.2.0/group_vars/all))
 
 ## Other deployment options
 
@@ -259,9 +271,9 @@ To set up the application by itself:
 1. Specify your database credentials (see the `database_*` [group variables](group_vars/all)) in a [vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html).
 1. Run the [`app` playbook](app.yml) instead of the [`consul`](consul.yml) one against a clean server.
 
-    ```sh
-    sudo ansible-playbook -v app.yml -i hosts
-    ```
+```sh
+ansible-playbook -v app.yml -i hosts
+```
 
 ### Platform-as-a-Service (PaaS)
 
@@ -271,24 +283,24 @@ Aside from just using managed databases, you might also look into platform-as-a-
 
 By default the installer assumes you can log in as `root`. The `root` user will only be used once to login and create a `deploy` user. The `deploy` user is the one that will actually install all libraries and is the user that must be used to login to the server to do maintenance tasks.
 
-If you do not have `root` access, you will need your system administrator to grant you: sudo privileges for a `deploy` user in the `wheel` group without password. 
-
-Also you will need to change the variable [root access](https://github.com/consul/installer/compare/no_root_user?expand=1#diff-fc7cb0a7b647c6ff35b553a10d616c4bR11) to `false`.
+If you do not have `root` access, you will need your system administrator to grant you sudo privileges for a `deploy` user in the `wheel` group without password. You will also need to change the variable `ansible_user` to `deploy` in your `hosts` file.
 
 ## Using a different user than deploy
 
-Change the variable [deploy_user](https://github.com/consul/installer/blob/master/group_vars/all#L12) to the username you would like to use.
+Change the variable [deploy_user](https://github.com/consul/installer/blob/1.2.0/group_vars/all#L12) to the username you would like to use.
 
 ## Ansible Documentation
 
 http://docs.ansible.com/
 
 ## Roadmap
+
 Cross platform compatibility (Ubuntu, CentOS)
 
 Greater diversity of interchangeable roles (nginx/apache, unicorn/puma/passenger, rvm/rbenv)
 
 ## How to contribute
+
 - [Open an issue](https://help.github.com/en/articles/creating-an-issue)
 - [Send us a Pull Request](https://help.github.com/en/articles/creating-a-pull-request)
 
