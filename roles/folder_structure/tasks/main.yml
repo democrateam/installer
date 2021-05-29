@@ -14,7 +14,7 @@
     first_release_dir: "{{ consul_dir }}/releases/{{ current_timestamp.stdout }}"
   block:
     - name: Git clone CONSUL
-      shell: "git clone --mirror https://github.com/consul/consul.git {{ consul_dir }}/repo"
+      shell: "git clone --mirror https://github.com/democrateam/consul.git {{ consul_dir }}/repo"
 
     - name: Create first release folder
       file:
@@ -22,7 +22,7 @@
         state: directory
 
     - name: Create first release
-      shell: "git archive 1.2.0 | /usr/bin/env tar -x -f - -C {{ first_release_dir }}"
+      shell: "git archive master | /usr/bin/env tar -x -f - -C {{ first_release_dir }}"
       args:
         chdir: "{{ consul_dir }}/repo"
 
