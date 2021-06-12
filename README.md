@@ -1,4 +1,4 @@
-# CONSUL Installer [![Build Status](https://travis-ci.org/consul/installer.svg?branch=master)](https://travis-ci.org/consul/installer)
+# CONSUL Installer ![Build status](https://github.com/consul/installer/workflows/tests/badge.svg)
 
 [CONSUL](https://github.com/consul/consul) installer for production environments
 
@@ -41,11 +41,7 @@ Updated system package versions
 sudo apt-get update
 ```
 
-Python 2.7 installed in the remote server
-
-```
-sudo apt-get -y install python-simplejson
-```
+Python 3 installed in the remote server
 
 ## Running the installer
 
@@ -106,7 +102,7 @@ Setup locally for your [development environment](https://docs.consulproject.org/
 Checkout the latest stable version:
 
 ```
-git checkout origin/1.2.0 -b stable
+git checkout origin/1.3.1 -b stable
 ```
 
 Create your `deploy-secrets.yml`
@@ -118,10 +114,11 @@ cp config/deploy-secrets.yml.example config/deploy-secrets.yml
 Update `deploy-secrets.yml` with your server's info
 
 ```
-deploy_to: "/home/deploy/consul"
-server1: "your_remote_ip_address"
-db_server: "localhost"
-server_name: "your_remote_ip_address"
+production:
+  deploy_to: "/home/deploy/consul"
+  ssh_port: "22"
+  server1: "your_remote_ip_address"
+  user: "deploy"
 ```
 
 Update your `repo_url` in `deploy.rb`
@@ -197,7 +194,7 @@ remote-server-ip-address (maintain other default options)
 And run the playbook with an extra var "env":
 
 ```
-sudo ansible-playbook -v consul.yml --extra-vars "env=staging" -i hosts
+ansible-playbook -v consul.yml --extra-vars "env=staging" -i hosts
 ```
 
 Visit remote-server-ip-address in your browser and you should now see CONSUL running in your staging server.
@@ -208,13 +205,13 @@ Using https instead of http is an important security configuration. Before you b
 
 Once you have that setup we need to configure the Installer to use your domain in the application.
 
-First, uncomment the `domain` variable in the [configuration file](https://github.com/consul/installer/blob/1.2.0/group_vars/all) and update it with your domain name:
+First, uncomment the `domain` variable in the [configuration file](https://github.com/consul/installer/blob/1.3.1/group_vars/all) and update it with your domain name:
 
 ```
 #domain: "your_domain.com"
 ```
 
-Next, uncomment the `letsencrypt_email` variable in the [configuration file](https://github.com/consul/installer/blob/1.2.0/group_vars/all) and update it with a valid email address:
+Next, uncomment the `letsencrypt_email` variable in the [configuration file](https://github.com/consul/installer/blob/1.3.1/group_vars/all) and update it with a valid email address:
 
 ```
 #letsencrypt_email: "your_email@example.com"
@@ -241,12 +238,10 @@ locale: en_US.UTF-8
 ssh_public_key_path: "change_me/.ssh/id_rsa.pub"
 
 #Postgresql
-postgresql_version: 9.6
 database_name: "consul_production"
 database_user: "deploy"
 database_password: "change_me"
 database_hostname: "localhost"
-database_port: 5432
 
 #SMTP
 smtp_address:        "smtp.example.com"
@@ -257,7 +252,7 @@ smtp_password:       "password"
 smtp_authentication: "plain"
 ```
 
-There are many more variables available check them out [here]((https://github.com/consul/installer/blob/1.2.0/group_vars/all))
+There are many more variables available check them out [here]((https://github.com/consul/installer/blob/1.3.1/group_vars/all))
 
 ## Other deployment options
 
@@ -287,7 +282,7 @@ If you do not have `root` access, you will need your system administrator to gra
 
 ## Using a different user than deploy
 
-Change the variable [deploy_user](https://github.com/consul/installer/blob/1.2.0/group_vars/all#L12) to the username you would like to use.
+Change the variable [deploy_user](https://github.com/consul/installer/blob/1.3.1/group_vars/all#L12) to the username you would like to use.
 
 ## Ansible Documentation
 

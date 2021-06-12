@@ -43,7 +43,7 @@
 - name: Update secret_key_base configuration in secrets.yml
   replace:
     path: "{{ shared_dir }}/config/secrets.yml"
-    regexp: '^{{ env }}:\n  secret_key_base: ""'
+    regexp: '^{{ env }}:\n  # secret_key_base: ""'
     replace: '{{ env }}:\n  secret_key_base: "{{ secret_key_base.stdout }}"'
 
 - name: Do not force https connection

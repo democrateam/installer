@@ -15,7 +15,7 @@
 
     - name: Install python-certbot-nginx
       apt:
-        name: "python-certbot-nginx"
+        name: "python3-certbot-nginx"
 
     - name: Grab Certbot certificate
       command: "sudo certbot --nginx --noninteractive --agree-tos --email {{ letsencrypt_email }} -d {{ domain }}"
@@ -24,15 +24,8 @@
   block:
     - name: Ensure python OpenSSL dependencies are installed
       apt:
-        name: 
-          - python-setuptools
-          - python-pip
-        state: present
-
-    - name: Ensure python OpenSSL dependencies are installed
-      pip:
-        name: 
-          - pyOpenSSL
+        name:
+          - python3-openssl
         state: present
 
     - name: Ensure directory exists for local self-signed TLS certs.
