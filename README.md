@@ -25,8 +25,8 @@ It will also create a `deploy` user to install these libraries
 
 A remote server with one of the supported distributions:
 
-- Ubuntu 16.04 x64
 - Ubuntu 18.04 x64
+- Ubuntu 20.04 x64
 
 Access to a remote server via public ssh key without password.
 The default user is `deploy` but you can [use any user](#using-a-different-user-than-deploy) with sudo privileges.
@@ -102,7 +102,7 @@ Setup locally for your [development environment](https://docs.consulproject.org/
 Checkout the latest stable version:
 
 ```
-git checkout origin/1.3.1 -b stable
+git checkout origin/1.4.1 -b stable
 ```
 
 Create your `deploy-secrets.yml`
@@ -205,13 +205,13 @@ Using https instead of http is an important security configuration. Before you b
 
 Once you have that setup we need to configure the Installer to use your domain in the application.
 
-First, uncomment the `domain` variable in the [configuration file](https://github.com/consul/installer/blob/1.3.1/group_vars/all) and update it with your domain name:
+First, uncomment the `domain` variable in the [configuration file](https://github.com/consul/installer/blob/1.4.1/group_vars/all) and update it with your domain name:
 
 ```
 #domain: "your_domain.com"
 ```
 
-Next, uncomment the `letsencrypt_email` variable in the [configuration file](https://github.com/consul/installer/blob/1.3.1/group_vars/all) and update it with a valid email address:
+Next, uncomment the `letsencrypt_email` variable in the [configuration file](https://github.com/consul/installer/blob/1.4.1/group_vars/all) and update it with a valid email address:
 
 ```
 #letsencrypt_email: "your_email@example.com"
@@ -235,7 +235,8 @@ timezone: Europe/Madrid
 locale: en_US.UTF-8
 
 # Authorized Hosts
-ssh_public_key_path: "change_me/.ssh/id_rsa.pub"
+ssh_public_key_path: "~/.ssh/id_rsa.pub"
+ansible_ssh_private_key_file: "~/.ssh/id_rsa"
 
 #Postgresql
 database_name: "consul_production"
@@ -252,7 +253,7 @@ smtp_password:       "password"
 smtp_authentication: "plain"
 ```
 
-There are many more variables available check them out [here]((https://github.com/consul/installer/blob/1.3.1/group_vars/all))
+There are many more variables available check them out [here]((https://github.com/consul/installer/blob/1.4.1/group_vars/all))
 
 ## Other deployment options
 
@@ -282,7 +283,7 @@ If you do not have `root` access, you will need your system administrator to gra
 
 ## Using a different user than deploy
 
-Change the variable [deploy_user](https://github.com/consul/installer/blob/1.3.1/group_vars/all#L12) to the username you would like to use.
+Change the variable [deploy_user](https://github.com/consul/installer/blob/1.4.1/group_vars/all#L13) to the username you would like to use.
 
 ## Ansible Documentation
 
