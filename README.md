@@ -32,16 +32,21 @@ Access to a remote server via public ssh key without password.
 The default user is `deploy` but you can [use any user](#using-a-different-user-than-deploy) with sudo privileges.
 
 ```
-ssh root@remote-server-ip-address
-```
-
-Updated system package versions
-
-```
-sudo apt-get update
+ssh-copy-id root@remote-server-ip-address
 ```
 
 Python 3 installed in the remote server
+
+```
+ssh root@remote-server-ip-address "apt-get update && apt-get -y install python-simplejson nano gpg gpg-agent"
+```
+
+Symlink for mkdir (required to install some gems)
+
+```
+ssh root@remote-server-ip-address "ln -s /bin/mkdir /usr/bin/mkdir"
+```
+
 
 ## Running the installer
 
