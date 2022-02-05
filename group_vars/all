@@ -11,6 +11,7 @@ locale: en_US.UTF-8
 # General settings
 env: production
 deploy_user: deploy
+deploy_group: wheel
 home_dir: "/home/{{ deploy_user }}"
 deploy_server_hostname: 127.0.0.1
 consul_dir: "{{ home_dir }}/{{ app_name }}"
@@ -25,6 +26,7 @@ shared_public_dirs:
   - "ckeditor_assets"
 
 ssh_public_key_path: "~/.ssh/id_rsa.pub"
+ansible_ssh_private_key_file: "~/.ssh/id_rsa"
 
 #Postgresql
 database_name: "{{app_name}}_{{ env }}"
@@ -39,6 +41,14 @@ smtp_domain:         "your_domain.com"
 smtp_user_name:      "username"
 smtp_password:       "password"
 smtp_authentication: "plain"
+
+# RVM
+rvm1_gpg_key_server: "hkp://keys.openpgp.org"
+rvm1_gpg_key_servers:
+  - "{{ rvm1_gpg_key_server }}"
+  - "hkp://keyserver.ubuntu.com"
+  - "hkp://pgp.mit.edu"
+  - "hkp://keyserver.pgp.com"
 
 #LetsEncrypt
 letsencrypt_email: "hello@democrateam.com"
