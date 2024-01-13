@@ -1,6 +1,6 @@
-# CONSUL DEMOCRACY Installer ![Build status](https://github.com/consul/installer/workflows/tests/badge.svg)
+# CONSUL DEMOCRACY Installer ![Build status](https://github.com/consuldemocracy/installer/workflows/tests/badge.svg)
 
-[CONSUL DEMOCRACY](https://github.com/consul/consul) installer for production environments
+[CONSUL DEMOCRACY](https://github.com/consuldemocracy/consuldemocracy) installer for production environments
 
 Using [Ansible](http://docs.ansible.com/), it will install and configure the following:
 
@@ -25,7 +25,6 @@ It will also create a `deploy` user to install these libraries
 
 A remote server with one of the supported distributions:
 
-- Ubuntu 18.04 x64
 - Ubuntu 20.04 x64
 - Debian Buster x64
 - Debian Bullseye x64
@@ -59,7 +58,7 @@ The following commands must be executed in your local machine
 Get the Ansible Playbook
 
 ```
-git clone https://github.com/consul/installer
+git clone https://github.com/consuldemocracy/installer
 cd installer
 ```
 
@@ -104,12 +103,12 @@ To restart the server and deploy new code to the server we have to configure Cap
 
 Create your [fork](https://help.github.com/articles/fork-a-repo/)
 
-Setup locally for your [development environment](https://docs.consulproject.org/docs/english-documentation/introduction/local_installation)
+Setup locally for your [development environment](https://docs.consuldemocracy.org/docs/english-documentation/introduction/local_installation)
 
 Checkout the latest stable version:
 
 ```
-git checkout origin/1.5.0 -b stable
+git checkout origin/2.0.1 -b stable
 ```
 
 Create your `deploy-secrets.yml`
@@ -131,7 +130,7 @@ production:
 Update your `repo_url` in `deploy.rb`
 
 ```
-set :repo_url, 'https://github.com/your_github_username/consul.git'
+set :repo_url, 'https://github.com/your_github_username/consuldemocracy.git'
 ```
 
 Make a change in a view and push it your fork in Github
@@ -175,7 +174,7 @@ You want to change this block of code for your production environment and use yo
     :enable_starttls_auto: true
 ```
 
-And restart the server running this command from your local CONSUL DEMOCRACY installation (see [Deploys with Capistrano](https://github.com/consul/installer#deploys-with-capistrano) for details).
+And restart the server running this command from your local CONSUL DEMOCRACY installation (see [Deploys with Capistrano](https://github.com/consuldemocracy/installer#deploys-with-capistrano) for details).
 
 ```
 cap production deploy:restart
@@ -212,13 +211,13 @@ Using https instead of http is an important security configuration. Before you b
 
 Once you have that setup we need to configure the Installer to use your domain in the application.
 
-First, uncomment the `domain` variable in the [configuration file](https://github.com/consul/installer/blob/1.5.0/group_vars/all) and update it with your domain name:
+First, uncomment the `domain` variable in the [configuration file](https://github.com/consuldemocracy/installer/blob/2.0.1/group_vars/all) and update it with your domain name:
 
 ```
 #domain: "your_domain.com"
 ```
 
-Next, uncomment the `letsencrypt_email` variable in the [configuration file](https://github.com/consul/installer/blob/1.5.0/group_vars/all) and update it with a valid email address:
+Next, uncomment the `letsencrypt_email` variable in the [configuration file](https://github.com/consuldemocracy/installer/blob/2.0.1/group_vars/all) and update it with a valid email address:
 
 ```
 #letsencrypt_email: "your_email@example.com"
@@ -265,7 +264,7 @@ If you are on Ubuntu and would like to use its default `sudo` group instead of `
 deploy_group: sudo
 ```
 
-There are many more variables available check them out [here]((https://github.com/consul/installer/blob/1.5.0/group_vars/all))
+There are many more variables available check them out [here]((https://github.com/consuldemocracy/installer/blob/2.0.1/group_vars/all))
 
 ## Other deployment options
 
@@ -295,7 +294,7 @@ If you do not have `root` access, you will need your system administrator to gra
 
 ## Using a different user than deploy
 
-Change the variable [deploy_user](https://github.com/consul/installer/blob/1.5.0/group_vars/all#L13) to the username you would like to use.
+Change the variable [deploy_user](https://github.com/consuldemocracy/installer/blob/2.0.1/group_vars/all#L12) to the username you would like to use.
 
 ## Ansible Documentation
 
