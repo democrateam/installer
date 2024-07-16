@@ -1,4 +1,4 @@
-# CONSUL DEMOCRACY Installer ![Build status](https://github.com/consuldemocracy/installer/workflows/tests/badge.svg)
+# CONSUL DEMOCRACY Installer ![Build status on Ubuntu](https://github.com/consuldemocracy/installer/workflows/ubuntu/badge.svg)
 
 [CONSUL DEMOCRACY](https://github.com/consuldemocracy/consuldemocracy) installer for production environments
 
@@ -26,8 +26,9 @@ It will also create a `deploy` user to install these libraries
 A remote server with one of the supported distributions:
 
 - Ubuntu 20.04 x64
-- Debian Buster x64
+- Ubuntu 22.04 x64
 - Debian Bullseye x64
+- Debian Bookworm x64
 
 Access to a remote server via public ssh key without password.
 The default user is `deploy` but you can [use any user](#using-a-different-user-than-deploy) with sudo privileges.
@@ -103,12 +104,12 @@ To restart the server and deploy new code to the server we have to configure Cap
 
 Create your [fork](https://help.github.com/articles/fork-a-repo/)
 
-Setup locally for your [development environment](https://docs.consuldemocracy.org/docs/english-documentation/introduction/local_installation)
+Setup locally for your [development environment](https://docs.consuldemocracy.org/tech_docs/introduction-1/local_installation)
 
 Checkout the latest stable version:
 
 ```
-git checkout origin/2.0.1 -b stable
+git checkout origin/2.1.1 -b stable
 ```
 
 Create your `deploy-secrets.yml`
@@ -211,13 +212,13 @@ Using https instead of http is an important security configuration. Before you b
 
 Once you have that setup we need to configure the Installer to use your domain in the application.
 
-First, uncomment the `domain` variable in the [configuration file](https://github.com/consuldemocracy/installer/blob/2.0.1/group_vars/all) and update it with your domain name:
+First, uncomment the `domain` variable in the [configuration file](https://github.com/consuldemocracy/installer/blob/2.1.1/group_vars/all) and update it with your domain name:
 
 ```
 #domain: "your_domain.com"
 ```
 
-Next, uncomment the `letsencrypt_email` variable in the [configuration file](https://github.com/consuldemocracy/installer/blob/2.0.1/group_vars/all) and update it with a valid email address:
+Next, uncomment the `letsencrypt_email` variable in the [configuration file](https://github.com/consuldemocracy/installer/blob/2.1.1/group_vars/all) and update it with a valid email address:
 
 ```
 #letsencrypt_email: "your_email@example.com"
@@ -264,7 +265,7 @@ If you are on Ubuntu and would like to use its default `sudo` group instead of `
 deploy_group: sudo
 ```
 
-There are many more variables available check them out [here]((https://github.com/consuldemocracy/installer/blob/2.0.1/group_vars/all))
+There are many more variables available check them out [here]((https://github.com/consuldemocracy/installer/blob/2.1.1/group_vars/all))
 
 ## Other deployment options
 
@@ -294,7 +295,7 @@ If you do not have `root` access, you will need your system administrator to gra
 
 ## Using a different user than deploy
 
-Change the variable [deploy_user](https://github.com/consuldemocracy/installer/blob/2.0.1/group_vars/all#L12) to the username you would like to use.
+Change the variable [deploy_user](https://github.com/consuldemocracy/installer/blob/2.1.1/group_vars/all#L12) to the username you would like to use.
 
 ## Ansible Documentation
 
